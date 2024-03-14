@@ -1,0 +1,115 @@
+syntax = "proto3";
+package rpc;
+
+import "google/protobuf/timestamp.proto";
+
+service RPCService {
+	rpc Exec(DownloadRequest) returns (ProcessResponse);
+	rpc ExecPlaylist(DownloadRequest) returns (ProcessResponse);
+	rpc Progress(Args) returns (DownloadProgress);
+	rpc Formats(Args) returns (DownloadFormats);
+	rpc Pending(Empty) returns (PendingList);
+	rpc Running(Empty) returns (RunningList);
+	rpc Kill(KillRequest) returns (ProcessResponse);
+	rpc KillAll(Empty) returns (ProcessResponse);
+	rpc Clear(ClearRequest) returns (ProcessResponse);
+	rpc FreeSpace(Empty) returns (FreeSpaceResponse);
+	rpc DirectoryTree(Empty) returns (DirectoryTreeResponse);
+	rpc UpdateExecutable(Empty) returns (UpdateResponse);
+}
+
+message Empty {}
+
+message DownloadRequest {
+    string Id = 1;
+	string URL = 2;
+	repeated string Params = 3;
+    string Path = 4;
+    string Rename = 5;
+}
+
+message DownloadFormats {
+	repeated Format Formats = 1;
+    Format Best = 2;
+	string Thumbnail = 3;
+	string Title = 4;
+	string URL = 5;
+}
+
+message DownloadProgress {
+	int32 Status = 1;
+	string Percentage = 2;
+	float Speed = 3;
+	float ETA = 4;
+}
+
+message Args {
+	string Id = 1;
+	string URL = 2;
+	repeated string Params = 3;
+}
+
+message KillRequest {
+	string Id = 1;
+}
+
+message ClearRequest {
+	string Id = 1;
+}
+
+message FreeSpaceResponse {
+	uint64 Free = 1;
+}
+
+message DirectoryTreeResponse {
+	repeated string Tree = 1;
+}
+
+message UpdateResponse {
+	bool Updated = 1;
+}
+
+message ProcessResponse {
+	string Id = 1;
+	DownloadProgress Progress = 2;
+	DownloadInfo Info = 3;
+	Output Output = 4;
+	repeated string Params = 5;
+}
+
+message Output {
+	string Path = 1;
+	string Filename = 2;
+}
+
+// Messages for Pending & Running Updates
+message RunningList {
+ 	repeated ProcessResponse Running = 1;
+}
+
+message PendingList {
+ 	repeated string Pending = 1;
+}
+
+message DownloadInfo {
+	string URL = 1;
+    string Title = 2;
+    string Thumbnail = 3;
+    string Resolution = 4;
+	int32 Size = 5;
+	string VCodec = 6;
+	string ACodec = 7;
+	string Extension = 8;
+	string OriginalURL = 9;
+	google.protobuf.Timestamp CreatedAt = 10;
+}
+
+message Format {
+	string Format_id = 1;
+	string Format_note = 2;
+	float FPS = 3;
+	string Resolution = 4;
+	string VCodec = 5;
+	string ACodec = 6;
+	float Size = 7;
+}
